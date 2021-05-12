@@ -1,8 +1,8 @@
 import { mount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
-import DynamicTitle from "@/index";
+import Plugin from "@/index";
 
-describe("DynamicTitle", () => {
+describe("VueReactiveTitle", () => {
   beforeEach(() => {
     document.title = "Default document title";
   });
@@ -15,7 +15,7 @@ describe("DynamicTitle", () => {
   it("should use document.title when nothing is available", () => {
     const localVue = createLocalVue();
 
-    localVue.use(DynamicTitle);
+    localVue.use(Plugin);
 
     expect(document.title).toEqual("Default document title");
   });
@@ -45,7 +45,7 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
       router,
     });
@@ -74,7 +74,7 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
       router,
     });
@@ -102,7 +102,7 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       router,
     });
 
@@ -129,7 +129,7 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
       divider: "|",
       router,
@@ -146,11 +146,11 @@ describe("DynamicTitle", () => {
     const Home = {
       template: "<div>home page</div>",
       mounted() {
-        this.$title = "Component title";
+        this.$setPageTitle("Component title");
       },
     };
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
     });
 
@@ -165,7 +165,7 @@ describe("DynamicTitle", () => {
     const Home = {
       template: "<div>home page</div>",
       mounted() {
-        this.$title = "Component title";
+        this.$setPageTitle("Component title");
       },
     };
 
@@ -185,14 +185,14 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
       router,
     });
 
     await router.push("/");
 
-    mount(Home, { localVue });
+    mount(Home, { localVue, router });
 
     expect(document.title).toEqual("Component title - MyApp");
   });
@@ -201,13 +201,8 @@ describe("DynamicTitle", () => {
     const localVue = createLocalVue();
 
     const Modal = {
-      template: "<div>modal</div>",
-      beforeDestroy() {
-        this.$vueReactiveTitle.reset();
-      },
-      created() {
-        this.$title = "Component title";
-      },
+      render: (h) => h("div"),
+      title: "Component title",
     };
 
     const Home = {
@@ -237,14 +232,14 @@ describe("DynamicTitle", () => {
 
     localVue.use(VueRouter);
 
-    localVue.use(DynamicTitle, {
+    localVue.use(Plugin, {
       title: "MyApp",
       router,
     });
 
     await router.push("/");
 
-    const wrapper = mount(Home, { localVue });
+    const wrapper = mount(Home, { localVue, router });
 
     await wrapper.find("button").trigger("click");
 
