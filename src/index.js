@@ -1,20 +1,21 @@
 const install = (Vue, newProps = {}) => {
-  const defaultProps = {
-    divider: "-",
-    title: null,
-    router: null,
-  };
-
-  const props = { ...defaultProps, ...newProps };
-  const { router, title: appName, divider } = props;
   const history = [];
+  const $page = { title: "" };
+  const defaultProps = { divider: "-", title: null, router: null };
+  const props = { ...defaultProps, ...newProps };
+
+  const { router } = props;
 
   const setPreviousTitle = () => {
+    // we remove the current title from the history array
     history.pop();
+    // we remove the previous title from the history array and render it as the current one
     setTitle(history.pop());
   };
 
   const setPageTitle = (title) => {
+    const { title: appName, divider } = props;
+
     let pageTitle = document.title;
 
     if (title) {
@@ -27,7 +28,7 @@ const install = (Vue, newProps = {}) => {
   };
 
   const addToHistory = (title) => {
-    if (!title) {
+    if (!title || history.includes(title)) {
       return;
     }
 
@@ -37,11 +38,8 @@ const install = (Vue, newProps = {}) => {
   const setTitle = (title) => {
     setPageTitle(title);
     addToHistory(title);
-    $page.title = title;
-  };
 
-  const $page = {
-    title: "",
+    $page.title = title;
   };
 
   Vue.util.defineReactive($page, "title", "");
@@ -70,12 +68,17 @@ const install = (Vue, newProps = {}) => {
     },
 
     beforeDestroy() {
-      if (this.$_vueReactiveTitle_isTitleSet) {
-        setPreviousTitle();
-      }
+      this.$resetPageTitle();
     },
 
     methods: {
+      $resetPageTitle() {
+        if (this.$_vueReactiveTitle_isTitleSet) {
+          this.$_vueReactiveTitle_isTitleSet = false;
+          setPreviousTitle();
+        }
+      },
+
       $setPageTitle(title) {
         this.$_vueReactiveTitle_isTitleSet = true;
         setTitle(title);
@@ -87,15 +90,29 @@ const install = (Vue, newProps = {}) => {
     return;
   }
 
+  const getRouteTitle = (route) => {
+    const nearestRoute = route.matched.find((route) => route.meta.title);
+
+    let title;
+
+    if (route.meta.title) {
+      title = route.meta.title;
+    } else if (nearestRoute) {
+      title = nearestRoute.meta.title;
+    }
+
+    return title;
+  };
+
   router.onReady(() => {
-    setTitle(router.currentRoute.meta.title);
+    setTitle(getRouteTitle(router.currentRoute));
 
     router.afterEach((to) => {
       if (to.matched.find((route) => route.meta.inheritPageTitle)) {
         return;
       }
 
-      setTitle(to.meta.title);
+      setTitle(getRouteTitle(to));
     });
   });
 };

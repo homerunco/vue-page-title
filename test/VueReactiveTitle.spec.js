@@ -8,7 +8,7 @@ describe("VueReactiveTitle", () => {
   });
 
   afterEach(() => {
-    document.title = "";
+    delete document.title;
     jest.clearAllMocks();
   });
 
@@ -197,21 +197,21 @@ describe("VueReactiveTitle", () => {
     expect(document.title).toEqual("Component title - MyApp");
   });
 
-  it("should fallback to route title when component removes title", async () => {
+  it("should fallback to the previous title", async () => {
     const localVue = createLocalVue();
 
-    const Modal = {
+    const Child = {
       render: (h) => h("div"),
-      title: "Component title",
+      title: "Child component title",
     };
 
     const Home = {
       data: () => ({ isOpen: false }),
-      components: { Modal },
+      components: { Child },
       template: `
         <div>
-          <button @click="isOpen = true">open modal</button>
-          <modal @close="isOpen = false" v-if="isOpen" />
+          <button @click="isOpen = !isOpen">render child</button>
+          <child v-if="isOpen" />
         </div>
       `,
     };
@@ -241,11 +241,13 @@ describe("VueReactiveTitle", () => {
 
     const wrapper = mount(Home, { localVue, router });
 
+    expect(document.title).toEqual("Route title - MyApp");
+
     await wrapper.find("button").trigger("click");
 
-    expect(document.title).toEqual("Component title - MyApp");
+    expect(document.title).toEqual("Child component title - MyApp");
 
-    await wrapper.findComponent(Modal).vm.$emit("close");
+    await wrapper.find("button").trigger("click");
 
     expect(document.title).toEqual("Route title - MyApp");
   });
