@@ -251,4 +251,32 @@ describe("VueReactiveTitle", () => {
 
     expect(document.title).toEqual("Route title - MyApp");
   });
+
+  it("should show notifications count with the current title", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      title: "MyApp",
+    });
+
+    const Home = {
+      title: "Home page",
+      template: `
+          <div>
+            <button @click="updateTitle">update</button>
+          </div>
+        `,
+      methods: {
+        updateTitle() {
+          this.$updateNotificationsCounter(3);
+        },
+      },
+    };
+
+    const wrapper = mount(Home, { localVue });
+
+    await wrapper.find("button").trigger("click");
+
+    expect(document.title).toEqual("(3) Home page - MyApp");
+  });
 });

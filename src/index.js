@@ -1,7 +1,12 @@
 const install = (Vue, newProps = {}) => {
   const history = [];
+  let notificationsCount = 0;
   const $page = { title: "" };
-  const defaultProps = { divider: "-", title: null, router: null };
+  const defaultProps = {
+    divider: "-",
+    title: null,
+    router: null,
+  };
   const props = { ...defaultProps, ...newProps };
 
   const { router } = props;
@@ -24,6 +29,10 @@ const install = (Vue, newProps = {}) => {
       pageTitle = appName;
     }
 
+    if (notificationsCount > 0) {
+      pageTitle = `(${notificationsCount}) ${pageTitle}`;
+    }
+
     document.title = pageTitle;
   };
 
@@ -41,8 +50,6 @@ const install = (Vue, newProps = {}) => {
 
     $page.title = title;
   };
-
-  Vue.util.defineReactive($page, "title", "");
 
   Object.defineProperty(Vue.prototype, "$title", {
     get: () => $page.title,
@@ -72,6 +79,11 @@ const install = (Vue, newProps = {}) => {
     },
 
     methods: {
+      $updateNotificationsCounter(count) {
+        notificationsCount = count;
+        setTitle(history.pop());
+      },
+
       $resetPageTitle() {
         if (this.$_vueReactiveTitle_isTitleSet) {
           this.$_vueReactiveTitle_isTitleSet = false;
