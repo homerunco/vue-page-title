@@ -12,9 +12,7 @@ const install = (Vue, newProps = {}) => {
   const { router } = props;
 
   const setPreviousTitle = () => {
-    // we remove the current title from the history array
     history.pop();
-    // we remove the previous title from the history array and render it as the current one
     setTitle(history.pop());
   };
 
