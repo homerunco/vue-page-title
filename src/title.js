@@ -6,7 +6,7 @@ let $page = {
   title: "",
 };
 
-export const defineTitleProperty = (Vue) => {
+export const defineGlobalProperties = (Vue) => {
   Object.defineProperty(Vue.prototype, "$title", {
     get: () => $page.title,
   });

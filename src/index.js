@@ -1,12 +1,12 @@
 import { updateOptions } from "@/options";
-import { defineTitleProperty } from "@/title";
+import { defineGlobalProperties } from "@/title";
 import mixin from "@/mixin";
 import addRoutesTracking from "@/add-routes-tracking";
 
 const install = (Vue, options = {}) => {
   updateOptions(options);
   addRoutesTracking();
-  defineTitleProperty(Vue);
+  defineGlobalProperties(Vue);
 
   Vue.mixin(mixin);
 };
