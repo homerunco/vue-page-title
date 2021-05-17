@@ -8,6 +8,7 @@ describe("Plugin", () => {
   beforeEach(() => {
     clearHistory();
     setNotificationsCounter(0);
+
     document.title = "Default document title";
   });
 
@@ -32,6 +33,45 @@ describe("Plugin", () => {
     });
 
     expect(document.title).toEqual("MyApp");
+  });
+
+  it("should set the page title using the global method", async () => {
+    const localVue = createLocalVue();
+
+    const Home = {
+      template: "<div>home page</div>",
+      mounted() {
+        this.$setPageTitle("Component title");
+      },
+    };
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+    });
+
+    mount(Home, { localVue });
+
+    expect(document.title).toEqual("Component title - MyApp");
+  });
+
+  it("should use a custom divider", async () => {
+    const localVue = createLocalVue();
+
+    const Home = {
+      template: "<div>home page</div>",
+      mounted() {
+        this.$setPageTitle("Home page");
+      },
+    };
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+      divider: "|",
+    });
+
+    mount(Home, { localVue });
+
+    expect(document.title).toEqual("Home page | MyApp");
   });
 
   it("should use the route title", async () => {
@@ -73,31 +113,6 @@ describe("Plugin", () => {
     expect(document.title).toEqual("About page - MyApp");
   });
 
-  it("should use the title only when no route title available", async () => {
-    const localVue = createLocalVue();
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      appName: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    expect(document.title).toEqual("MyApp");
-  });
-
   it("should use the route title only", async () => {
     const localVue = createLocalVue();
 
@@ -123,92 +138,6 @@ describe("Plugin", () => {
     await router.push("/");
 
     expect(document.title).toEqual("Home page");
-  });
-
-  it("should use a custom divider", async () => {
-    const localVue = createLocalVue();
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          meta: {
-            title: "Home page",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      appName: "MyApp",
-      divider: "|",
-      router,
-    });
-
-    await router.push("/");
-
-    expect(document.title).toEqual("Home page | MyApp");
-  });
-
-  it("should set the page title using the global method", async () => {
-    const localVue = createLocalVue();
-
-    const Home = {
-      template: "<div>home page</div>",
-      mounted() {
-        this.$setPageTitle("Component title");
-      },
-    };
-
-    localVue.use(Plugin, {
-      appName: "MyApp",
-    });
-
-    mount(Home, { localVue });
-
-    expect(document.title).toEqual("Component title - MyApp");
-  });
-
-  it("should use the component title instead of the route title", async () => {
-    const localVue = createLocalVue();
-
-    const Home = {
-      template: "<div>home page</div>",
-      mounted() {
-        this.$setPageTitle("Component title");
-      },
-    };
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-          meta: {
-            title: "Route title",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      appName: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    mount(Home, { localVue, router });
-
-    expect(document.title).toEqual("Component title - MyApp");
   });
 
   it("should fallback to the previous title", async () => {
@@ -264,6 +193,44 @@ describe("Plugin", () => {
     await wrapper.find("button").trigger("click");
 
     expect(document.title).toEqual("Route title - MyApp");
+  });
+
+  it("should use the component title instead of the route title", async () => {
+    const localVue = createLocalVue();
+
+    const Home = {
+      template: "<div>home page</div>",
+      mounted() {
+        this.$setPageTitle("Component title");
+      },
+    };
+
+    const router = new VueRouter({
+      mode: "abstract",
+      routes: [
+        {
+          name: "home",
+          path: "/",
+          component: Home,
+          meta: {
+            title: "Route title",
+          },
+        },
+      ],
+    });
+
+    localVue.use(VueRouter);
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+      router,
+    });
+
+    await router.push("/");
+
+    mount(Home, { localVue, router });
+
+    expect(document.title).toEqual("Component title - MyApp");
   });
 
   it("should show notifications count with the current title", async () => {
@@ -436,5 +403,57 @@ describe("Plugin", () => {
     await router.push("/child");
 
     expect(document.title).toEqual("Parent title - MyApp");
+  });
+
+  it("should reset the title on destroy", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+    });
+
+    const wrapper = mount(
+      {
+        template: `
+        <div>
+          <button @click="$setPageTitle('New title')">set title</button>
+        </div>
+      `,
+      },
+      { localVue }
+    );
+
+    await wrapper.find("button").trigger("click");
+
+    expect(document.title).toEqual("New title - MyApp");
+
+    wrapper.destroy();
+
+    expect(document.title).toEqual("MyApp");
+  });
+
+  it("should not reset the title on destroy if component title has never been set", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+    });
+
+    const wrapper = mount(
+      {
+        template: `
+        <div>
+          <button @click="$setPageTitle('New title')">set title</button>
+        </div>
+      `,
+      },
+      { localVue }
+    );
+
+    expect(document.title).toEqual("MyApp");
+
+    wrapper.destroy();
+
+    expect(document.title).toEqual("MyApp");
   });
 });
