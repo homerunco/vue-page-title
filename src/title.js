@@ -19,7 +19,8 @@ export const getPageTitle = (value) => {
   let pageTitle = document.title;
 
   if (value) {
-    pageTitle = value + (appName ? ` ${divider} ${appName}` : "");
+    const suffix = appName ? `${divider} ${appName}` : "";
+    pageTitle = `${value} ${suffix}`;
   } else if (appName) {
     pageTitle = appName;
   }

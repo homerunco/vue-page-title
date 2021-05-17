@@ -10,7 +10,7 @@ let options = {
 
 export const getOptions = () => options;
 
-export const updateOptions = (params = {}) => {
+export const updateOptions = (params) => {
   options = {
     ...defaultOptions,
     ...params,

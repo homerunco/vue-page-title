@@ -2,7 +2,7 @@ import { setPreviousTitle, setTitle } from "@/title";
 import { popHistoryItem } from "@/history";
 import { setNotificationsCounter } from "@/notifications";
 
-export default {
+const mixin = {
   data() {
     return {
       $_vuePageTitle_isTitleSet: false,
@@ -32,10 +32,12 @@ export default {
     },
 
     $resetPageTitle() {
-      if (this.$_vuePageTitle_isTitleSet) {
-        this.$_vuePageTitle_isTitleSet = false;
-        setPreviousTitle();
+      if (!this.$_vuePageTitle_isTitleSet) {
+        return;
       }
+
+      this.$_vuePageTitle_isTitleSet = false;
+      setPreviousTitle();
     },
 
     $setPageTitle(value) {
@@ -44,3 +46,9 @@ export default {
     },
   },
 };
+
+export const registerMixin = (Vue) => {
+  Vue.mixin(mixin);
+};
+
+export default mixin;

@@ -1,14 +1,14 @@
 import { updateOptions } from "@/options";
-import { defineGlobalProperties } from "@/title";
-import mixin from "@/mixin";
+import { setTitle } from "@/title";
 import addRoutesTracking from "@/add-routes-tracking";
+import registerGlobals from "@/register-globals";
 
 const install = (Vue, options = {}) => {
   updateOptions(options);
+  registerGlobals(Vue);
   addRoutesTracking();
-  defineGlobalProperties(Vue);
 
-  Vue.mixin(mixin);
+  setTitle();
 };
 
 export { install };

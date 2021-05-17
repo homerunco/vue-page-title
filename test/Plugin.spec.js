@@ -16,12 +16,22 @@ describe("Plugin", () => {
     jest.clearAllMocks();
   });
 
-  it("should use document.title when nothing is available", () => {
+  it("should keep the document.title by default", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin);
 
     expect(document.title).toEqual("Default document title");
+  });
+
+  it("should use the appName", () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+    });
+
+    expect(document.title).toEqual("MyApp");
   });
 
   it("should use the route title", async () => {
@@ -144,7 +154,7 @@ describe("Plugin", () => {
     expect(document.title).toEqual("Home page | MyApp");
   });
 
-  it("should use title property inside the component", async () => {
+  it("should set the page title using the global method", async () => {
     const localVue = createLocalVue();
 
     const Home = {
@@ -284,13 +294,44 @@ describe("Plugin", () => {
     expect(document.title).toEqual("(3) Home page - MyApp");
   });
 
-  it("should render the title", async () => {
+  it("should render the title passed as string to component option", async () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin);
 
     const Home = {
       title: "Home page",
+      template: `<div>{{ $title }}</div>`,
+    };
+
+    const wrapper = mount(Home, { localVue });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it("should render the title passed as function to component option", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin);
+
+    const Home = {
+      title: () => "Home page",
+      template: `<div>{{ $title }}</div>`,
+    };
+
+    const wrapper = mount(Home, { localVue });
+
+    expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it("should render the title using component data", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin);
+
+    const Home = {
+      title: ({ name }) => `Hello, ${name}`,
+      data: () => ({ name: "Peter Venkman " }),
       template: `<div>{{ $title }}</div>`,
     };
 
@@ -337,6 +378,60 @@ describe("Plugin", () => {
       appName: "MyApp",
       router,
     });
+
+    await router.push("/child");
+
+    expect(document.title).toEqual("Parent title - MyApp");
+  });
+
+  it("should inherit title from current value", async () => {
+    const localVue = createLocalVue();
+
+    const Child = {
+      render: (h) => h("div"),
+    };
+
+    const Home = {
+      template: `
+        <div>
+          <button @click="$setPageTitle('Parent title')">Set title</button>
+        </div>
+      `,
+    };
+
+    const router = new VueRouter({
+      mode: "abstract",
+      routes: [
+        {
+          name: "home",
+          path: "/",
+          component: Home,
+          meta: {
+            inheritPageTitle: true,
+          },
+          children: [
+            {
+              name: "child",
+              path: "child",
+              component: Child,
+            },
+          ],
+        },
+      ],
+    });
+
+    localVue.use(VueRouter);
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+      router,
+    });
+
+    await router.push("/");
+
+    const wrapper = mount(Home, { localVue });
+
+    await wrapper.find("button").trigger("click");
 
     await router.push("/child");
 
