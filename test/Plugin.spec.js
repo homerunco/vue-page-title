@@ -1,9 +1,11 @@
 import { mount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
+import * as history from "@/history";
 import Plugin from "@/index";
 
 describe("Plugin", () => {
   beforeEach(() => {
+    history.reset();
     document.title = "Default document title";
   });
 
