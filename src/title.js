@@ -1,6 +1,6 @@
 import { getOptions } from "@/options";
-import { getNotificationsCount } from "@/notifications";
-import * as history from "@/history";
+import { getNotificationsCounter } from "@/notifications";
+import { popHistoryItem, addHistoryItem } from "@/history";
 
 let $page = {
   title: "",
@@ -12,20 +12,20 @@ export const defineGlobalProperties = (Vue) => {
   });
 };
 
-export const getPageTitle = (title) => {
-  const { title: appName, divider } = getOptions();
-  const notificationsCount = getNotificationsCount();
+export const getPageTitle = (value) => {
+  const { appName, divider } = getOptions();
+  const notifications = getNotificationsCounter();
 
   let pageTitle = document.title;
 
-  if (title) {
-    pageTitle = title + (appName ? ` ${divider} ${appName}` : "");
+  if (value) {
+    pageTitle = value + (appName ? ` ${divider} ${appName}` : "");
   } else if (appName) {
     pageTitle = appName;
   }
 
-  if (notificationsCount > 0) {
-    pageTitle = `(${notificationsCount}) ${pageTitle}`;
+  if (notifications > 0) {
+    pageTitle = `(${notifications}) ${pageTitle}`;
   }
 
   return pageTitle;
@@ -35,7 +35,7 @@ export const setTitle = (value) => {
   const pageTitle = getPageTitle(value);
 
   // add to history array
-  history.add(value);
+  addHistoryItem(value);
 
   // update global computed property
   $page.title = value;
@@ -45,6 +45,6 @@ export const setTitle = (value) => {
 };
 
 export const setPreviousTitle = () => {
-  history.pop();
-  setTitle(history.pop());
+  popHistoryItem();
+  setTitle(popHistoryItem());
 };

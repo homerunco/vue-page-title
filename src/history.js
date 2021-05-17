@@ -1,6 +1,6 @@
 let history = [];
 
-export const add = (value) => {
+export const addHistoryItem = (value) => {
   if (!value || history.includes(value)) {
     return;
   }
@@ -8,10 +8,6 @@ export const add = (value) => {
   history.push(value);
 };
 
-export const pop = () => {
-  return history.pop();
-};
+export const popHistoryItem = () => history.pop();
 
-export const clear = () => {
-  history = [];
-};
+export const clearHistory = () => (history = []);

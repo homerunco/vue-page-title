@@ -1,6 +1,6 @@
-import { setTitle, setPreviousTitle } from "@/title";
-import * as history from "@/history";
-import { setNotificationsCount } from "@/notifications";
+import { setPreviousTitle, setTitle } from "@/title";
+import { popHistoryItem } from "@/history";
+import { setNotificationsCounter } from "@/notifications";
 
 export default {
   data() {
@@ -27,8 +27,8 @@ export default {
 
   methods: {
     $updateNotificationsCounter(count) {
-      setNotificationsCount(count);
-      setTitle(history.pop());
+      setNotificationsCounter(count);
+      setTitle(popHistoryItem());
     },
 
     $resetPageTitle() {
@@ -38,9 +38,9 @@ export default {
       }
     },
 
-    $setPageTitle(title) {
+    $setPageTitle(value) {
       this.$_vuePageTitle_isTitleSet = true;
-      setTitle(title);
+      setTitle(value);
     },
   },
 };

@@ -1,11 +1,13 @@
 import { mount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
-import * as history from "@/history";
+import { clearHistory } from "@/history";
+import { setNotificationsCounter } from "@/notifications";
 import Plugin from "@/index";
 
 describe("Plugin", () => {
   beforeEach(() => {
-    history.clear();
+    clearHistory();
+    setNotificationsCounter(0);
     document.title = "Default document title";
   });
 
@@ -48,7 +50,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
       router,
     });
 
@@ -77,7 +79,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
       router,
     });
 
@@ -132,7 +134,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
       divider: "|",
       router,
     });
@@ -153,7 +155,7 @@ describe("Plugin", () => {
     };
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
     });
 
     mount(Home, { localVue });
@@ -188,7 +190,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
       router,
     });
 
@@ -235,7 +237,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
       router,
     });
 
@@ -258,7 +260,7 @@ describe("Plugin", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
-      title: "MyApp",
+      appName: "MyApp",
     });
 
     const Home = {
@@ -295,5 +297,49 @@ describe("Plugin", () => {
     const wrapper = mount(Home, { localVue });
 
     expect(wrapper.element).toMatchSnapshot();
+  });
+
+  it("should render parent route title", async () => {
+    const localVue = createLocalVue();
+
+    const Child = {
+      render: (h) => h("div"),
+    };
+
+    const Home = {
+      render: (h) => h("router-view"),
+    };
+
+    const router = new VueRouter({
+      mode: "abstract",
+      routes: [
+        {
+          name: "home",
+          path: "/",
+          component: Home,
+          meta: {
+            title: "Parent title",
+          },
+          children: [
+            {
+              name: "child",
+              path: "child",
+              component: Child,
+            },
+          ],
+        },
+      ],
+    });
+
+    localVue.use(VueRouter);
+
+    localVue.use(Plugin, {
+      appName: "MyApp",
+      router,
+    });
+
+    await router.push("/child");
+
+    expect(document.title).toEqual("Parent title - MyApp");
   });
 });

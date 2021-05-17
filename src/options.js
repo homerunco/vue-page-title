@@ -1,6 +1,6 @@
 const defaultOptions = {
   divider: "-",
-  title: null,
+  appName: null,
   router: null,
 };
 

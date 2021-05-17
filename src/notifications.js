@@ -1,7 +1,7 @@
-let notificationsCount = 0;
+let counter = 0;
 
-export const setNotificationsCount = (value = 0) => {
-  notificationsCount = value;
+export const setNotificationsCounter = (value) => {
+  counter = value;
 };
 
-export const getNotificationsCount = () => notificationsCount;
+export const getNotificationsCounter = () => counter;
