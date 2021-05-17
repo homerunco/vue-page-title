@@ -35,13 +35,10 @@ export const getPageTitle = (value) => {
 export const setTitle = (value) => {
   const pageTitle = getPageTitle(value);
 
-  // add to history array
   addHistoryItem(value);
 
-  // update global computed property
   $page.title = value;
 
-  // update HTML tag
   document.title = pageTitle;
 };
 
