@@ -2,7 +2,7 @@ import { mount, createLocalVue } from "@vue/test-utils";
 import VueRouter from "vue-router";
 import Plugin from "@/index";
 
-describe("VueReactiveTitle", () => {
+describe("Plugin", () => {
   beforeEach(() => {
     document.title = "Default document title";
   });

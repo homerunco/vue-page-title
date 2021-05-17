@@ -16,7 +16,7 @@ Tell us what actually happens.
 
 Run this command in the project folder and fill in their results:
 
-`npm ls vue-reactive-title`: 
+`npm ls @homerun/vue-page-title`: 
 
 Then, specify:
 

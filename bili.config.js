@@ -4,7 +4,7 @@ const isDev = process.env.NODE_ENV === "dev";
 
 const config = {
   input: {
-    "vue-reactive-title": "./src/index.js",
+    "vue-page-title": "./src/index.js",
   },
   externals: ["vue"],
   plugins: {
@@ -18,7 +18,7 @@ const config = {
   output: {
     dir: "./dist/",
     format: isDev ? ["esm"] : ["esm", "cjs", "umd", "umd-min"],
-    moduleName: "VueReactiveTitle",
+    moduleName: "VuePageTitle",
   },
 };
 

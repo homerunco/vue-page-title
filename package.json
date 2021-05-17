@@ -1,5 +1,5 @@
 {
-  "name": "vue-reactive-title",
+  "name": "@homerun/vue-page-title",
   "description": "Vue.js page title",
   "version": "0.1.0",
   "author": {
@@ -9,7 +9,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/homerunco/vue-reactive-title"
+    "url": "https://github.com/homerunco/vue-page-title"
   },
   "scripts": {
     "clean": "del-cli dist",
@@ -49,15 +49,15 @@
     "vue",
     "vuejs"
   ],
-  "main": "./dist/vue-reactive-title.js",
-  "module": "./dist/vue-reactive-title.esm.js",
-  "unpkg": "./dist/vue-reactive-title.umd.js",
-  "jsdelivr": "./dist/vue-reactive-title.umd.js",
+  "main": "./dist/vue-page-title.js",
+  "module": "./dist/vue-page-title.esm.js",
+  "unpkg": "./dist/vue-page-title.umd.js",
+  "jsdelivr": "./dist/vue-page-title.umd.js",
   "files": ["dist"],
   "bugs": {
-    "url": "https://github.com/homerunco/vue-reactive-title/issues"
+    "url": "https://github.com/homerunco/vue-page-title/issues"
   },
-  "homepage": "https://github.com/homerunco/vue-reactive-title#readme",
+  "homepage": "https://github.com/homerunco/vue-page-title#readme",
   "peerDependencies": {
     "vue": "^2.0.0"
   },

@@ -1,3 +1,3 @@
-# vue-reactive-title
+# vue-page-title
 
 Vue.js page title

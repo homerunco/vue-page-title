@@ -56,7 +56,7 @@ const install = (Vue, newProps = {}) => {
   Vue.mixin({
     data() {
       return {
-        $_vueReactiveTitle_isTitleSet: false,
+        $_vuePageTitle_isTitleSet: false,
       };
     },
 
@@ -83,14 +83,14 @@ const install = (Vue, newProps = {}) => {
       },
 
       $resetPageTitle() {
-        if (this.$_vueReactiveTitle_isTitleSet) {
-          this.$_vueReactiveTitle_isTitleSet = false;
+        if (this.$_vuePageTitle_isTitleSet) {
+          this.$_vuePageTitle_isTitleSet = false;
           setPreviousTitle();
         }
       },
 
       $setPageTitle(title) {
-        this.$_vueReactiveTitle_isTitleSet = true;
+        this.$_vuePageTitle_isTitleSet = true;
         setTitle(title);
       },
     },
