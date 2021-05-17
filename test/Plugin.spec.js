@@ -5,7 +5,7 @@ import Plugin from "@/index";
 
 describe("Plugin", () => {
   beforeEach(() => {
-    history.reset();
+    history.clear();
     document.title = "Default document title";
   });
 
@@ -280,5 +280,20 @@ describe("Plugin", () => {
     await wrapper.find("button").trigger("click");
 
     expect(document.title).toEqual("(3) Home page - MyApp");
+  });
+
+  it("should render the title", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin);
+
+    const Home = {
+      title: "Home page",
+      template: `<div>{{ $title }}</div>`,
+    };
+
+    const wrapper = mount(Home, { localVue });
+
+    expect(wrapper.element).toMatchSnapshot();
   });
 });

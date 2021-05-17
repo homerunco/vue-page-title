@@ -12,6 +12,6 @@ export const pop = () => {
   return history.pop();
 };
 
-export const reset = () => {
+export const clear = () => {
   history = [];
 };

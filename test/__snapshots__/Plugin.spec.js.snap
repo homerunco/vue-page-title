@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Plugin should render the title 1`] = `
+<div>
+  Home page
+</div>
+`;
