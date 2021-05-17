@@ -2,7 +2,7 @@
   <a href="https://npm.im/@homerun/vue-page-title">
     <img src="https://badgen.net/npm/v/@homerun/vue-page-title">
   </a>
-  <a href="https://npm.im/homerun/vue-page-title">
+  <a href="https://npm.im/@homerun/vue-page-title">
     <img src="https://badgen.net/npm/dw/homerun/vue-page-title?color=blue">
   </a>
   <a href="https://bundlephobia.com/result?p=@homerun/vue-page-title">
