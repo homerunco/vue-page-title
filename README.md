@@ -57,19 +57,6 @@ export default {
 }
 ```
 
-### Render title inside the component template
-It's possible to also render the title inside the template, by using the global available property `$title`.
-
-This will only render the title with no suffix.
-
-```html
-<template>
-  <div>
-    <h1>{{ $title }}</h1>
-  </div>
-</template>
-```
-
 ### Add a suffix to the page title
 ```js
 import Vue from "vue"
@@ -91,6 +78,19 @@ Vue.use(VuePageTitle, {
   divider: "|" // default value: '-'
 })
 ```
+
+### Render title inside component's template
+It's possible to render the title inside the template by using the global available property `$title`.
+
+```html
+<template>
+  <div>
+    <h1>{{ $title }}</h1>
+  </div>
+</template>
+```
+
+The `$title` property only renders the value of the title without suffix or divider
 
 ### Use together with VueRouter 
 The plugin accepts the VueRouter instance as an optional parameter to track all route titles and automatically apply it to the document title.
