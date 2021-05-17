@@ -57,6 +57,25 @@ export default {
 }
 ```
 
+### Render title inside the component template
+It's possible to also render the title inside the template, by using the global available property `$title`.
+
+This will only render the title with no suffix.
+
+```html
+<template>
+  <div>
+    <h1>{{ $title }}</h1>
+  </div>
+</template>
+```
+
+```js
+export default {
+  title: 'Home page'
+}
+```
+
 ### Add a suffix to the page title
 ```js
 import Vue from "vue"
