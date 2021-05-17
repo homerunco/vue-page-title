@@ -26,6 +26,14 @@
     "prepublishOnly": "TZ=UTC yarn lint && yarn test && yarn build"
   },
   "jest": {
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "method": 100,
+        "lines": 100
+      }
+    },
     "setupFiles": [
       "<rootDir>/jest/init.js"
     ],

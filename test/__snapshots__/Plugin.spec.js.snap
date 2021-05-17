@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Plugin should render the title passed as function to component option 1`] = `
+<div>
+  Home page
+</div>
+`;
+
+exports[`Plugin should render the title passed as string to component option 1`] = `
+<div>
+  Home page
+</div>
+`;
+
+exports[`Plugin should render the title using component data 1`] = `
+<div>
+  Hello, Peter Venkman 
+</div>
+`;
