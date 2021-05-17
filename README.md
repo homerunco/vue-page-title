@@ -70,12 +70,6 @@ This will only render the title with no suffix.
 </template>
 ```
 
-```js
-export default {
-  title: 'Home page'
-}
-```
-
 ### Add a suffix to the page title
 ```js
 import Vue from "vue"
