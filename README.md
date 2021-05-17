@@ -13,7 +13,7 @@
 
 # vue-page-title
 
-Vue.js page title
+Vue.js page title manager
 
 ## Requirements
 
