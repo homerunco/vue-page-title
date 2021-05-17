@@ -32,13 +32,11 @@ export const getPageTitle = (value) => {
 };
 
 export const setTitle = (value) => {
-  const pageTitle = getPageTitle(value);
+  $page.title = value;
 
   addHistoryItem(value);
 
-  $page.title = value;
-
-  document.title = pageTitle;
+  document.title = getPageTitle(value);
 };
 
 export const setPreviousTitle = () => {
