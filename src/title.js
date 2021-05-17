@@ -13,16 +13,15 @@ export const defineGlobalProperties = (Vue) => {
 };
 
 export const getPageTitle = (value) => {
-  const { appName, divider } = getOptions();
+  const { suffix, divider } = getOptions();
   const notifications = getNotificationsCounter();
 
   let pageTitle = document.title;
 
   if (value) {
-    const suffix = appName ? `${divider} ${appName}` : "";
-    pageTitle = `${value} ${suffix}`;
-  } else if (appName) {
-    pageTitle = appName;
+    pageTitle = value + (suffix ? ` ${divider} ${suffix}` : "");
+  } else if (suffix) {
+    pageTitle = suffix;
   }
 
   if (notifications > 0) {

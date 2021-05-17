@@ -25,11 +25,11 @@ describe("Plugin", () => {
     expect(document.title).toEqual("Default document title");
   });
 
-  it("should use the appName", () => {
+  it("should use the suffix", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
     });
 
     expect(document.title).toEqual("MyApp");
@@ -46,7 +46,7 @@ describe("Plugin", () => {
     };
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
     });
 
     mount(Home, { localVue });
@@ -65,7 +65,7 @@ describe("Plugin", () => {
     };
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       divider: "|",
     });
 
@@ -100,7 +100,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       router,
     });
 
@@ -176,7 +176,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       router,
     });
 
@@ -222,7 +222,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       router,
     });
 
@@ -237,7 +237,7 @@ describe("Plugin", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
     });
 
     const Home = {
@@ -342,7 +342,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       router,
     });
 
@@ -390,7 +390,7 @@ describe("Plugin", () => {
     localVue.use(VueRouter);
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
       router,
     });
 
@@ -409,7 +409,7 @@ describe("Plugin", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
     });
 
     const wrapper = mount(
@@ -436,7 +436,7 @@ describe("Plugin", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
-      appName: "MyApp",
+      suffix: "MyApp",
     });
 
     const wrapper = mount(

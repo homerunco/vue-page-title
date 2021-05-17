@@ -57,17 +57,19 @@ export default {
 }
 ```
 
-### Append application name to the title
+### Add a suffix to the page title
 ```js
 import Vue from "vue"
 import VuePageTitle from "@homerun/vue-page-title"
 
 Vue.use(VuePageTitle, {
-  appName: "MyApp" // default value: null
+  suffix: "MyApp" // default value: null
 })
 ```
+The plugin will append the suffix to the value of the page title separated by a divider.
+In case there is no value set, the suffix will be the page title.
 
-### Change title/appName divider
+### Change title divider
 ```js
 import Vue from "vue"
 import VuePageTitle from "@homerun/vue-page-title"
