@@ -57,7 +57,8 @@ export default {
 }
 ```
 
-### Add a suffix to the page title
+### Prefix and Suffix
+#### Add a suffix to the page title
 ```js
 import Vue from "vue"
 import VuePageTitle from "@homerun/vue-page-title"
@@ -66,8 +67,19 @@ Vue.use(VuePageTitle, {
   suffix: "MyApp" // default value: null
 })
 ```
-The plugin will append the suffix to the value of the page title separated by a divider.
-In case there is no value set, the suffix will be the page title.
+
+#### Add a prefix to the page title
+```js
+import Vue from "vue"
+import VuePageTitle from "@homerun/vue-page-title"
+
+Vue.use(VuePageTitle, {
+  prefix: "MyApp" // default value: null
+})
+```
+
+The plugin will add prefix and suffix to the value of the page title separated by a divider.
+In case there is no value set, the prefix or the suffix will be the page title.
 
 ### Change title divider
 ```js
