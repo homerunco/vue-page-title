@@ -2,7 +2,7 @@
   <a href="https://npm.im/@homerun/vue-page-title">
     <img src="https://badgen.net/npm/v/@homerun/vue-page-title">
   </a>
-  <a href="https://npm.im/homerun/vue-page-title">
+  <a href="https://npm.im/@homerun/vue-page-title">
     <img src="https://badgen.net/npm/dw/homerun/vue-page-title?color=blue">
   </a>
   <a href="https://bundlephobia.com/result?p=@homerun/vue-page-title">
@@ -78,6 +78,19 @@ Vue.use(VuePageTitle, {
   divider: "|" // default value: '-'
 })
 ```
+
+### Render title inside component's template
+It's possible to render the title inside the template by using the global available property `$title`.
+
+```html
+<template>
+  <div>
+    <h1>{{ $title }}</h1>
+  </div>
+</template>
+```
+
+The `$title` property only renders the value of the title without suffix or divider
 
 ### Use together with VueRouter 
 The plugin accepts the VueRouter instance as an optional parameter to track all route titles and automatically apply it to the document title.
