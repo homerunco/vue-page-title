@@ -1,9 +1,14 @@
 import { getOptions } from "@/options";
 import { getNotificationsCounter } from "@/notifications";
-import { popHistoryItem, addHistoryItem } from "@/history";
+import { addHistoryItem } from "@/history";
 
+let documentTitle;
 let $page = {
   title: "",
+};
+
+export const storeOriginalDocumentTitle = () => {
+  documentTitle = document.title;
 };
 
 export const defineGlobalProperties = (Vue) => {
@@ -13,15 +18,19 @@ export const defineGlobalProperties = (Vue) => {
 };
 
 export const getPageTitle = (value) => {
-  const { suffix, divider } = getOptions();
+  const { suffix, prefix, divider } = getOptions();
   const notifications = getNotificationsCounter();
+  const fallbackTitle = prefix || suffix;
 
-  let pageTitle = document.title;
+  let pageTitle = documentTitle;
 
   if (value) {
-    pageTitle = value + (suffix ? ` ${divider} ${suffix}` : "");
-  } else if (suffix) {
-    pageTitle = suffix;
+    const suffixValue = suffix ? ` ${divider} ${suffix}` : "";
+    const prefixValue = prefix ? `${prefix} ${divider} ` : "";
+
+    pageTitle = prefixValue + value + suffixValue;
+  } else if (fallbackTitle) {
+    pageTitle = fallbackTitle;
   }
 
   if (notifications > 0) {
@@ -37,9 +46,4 @@ export const setTitle = (value) => {
   addHistoryItem(value);
 
   document.title = getPageTitle(value);
-};
-
-export const setPreviousTitle = () => {
-  popHistoryItem();
-  setTitle(popHistoryItem());
 };

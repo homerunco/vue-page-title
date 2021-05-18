@@ -1,6 +1,7 @@
 const defaultOptions = {
   divider: "-",
   suffix: null,
+  prefix: null,
   router: null,
 };
 

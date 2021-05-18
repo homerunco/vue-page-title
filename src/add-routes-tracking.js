@@ -1,4 +1,3 @@
-import { getOptions } from "@/options";
 import { setTitle } from "@/title";
 
 const getRouteTitle = (route) => {
@@ -15,13 +14,7 @@ const getRouteTitle = (route) => {
   return title;
 };
 
-export default () => {
-  const { router } = getOptions();
-
-  if (!router) {
-    return;
-  }
-
+export default (router) => {
   router.onReady(() => {
     setTitle(getRouteTitle(router.currentRoute));
 

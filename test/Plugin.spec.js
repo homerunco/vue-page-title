@@ -25,6 +25,25 @@ describe("Plugin", () => {
     expect(document.title).toEqual("Default document title");
   });
 
+  it("should use the prefix", () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      prefix: "MyApp",
+    });
+
+    const Home = {
+      template: "<div>home page</div>",
+      mounted() {
+        this.$setPageTitle("My title");
+      },
+    };
+
+    mount(Home, { localVue });
+
+    expect(document.title).toEqual("MyApp - My title");
+  });
+
   it("should use the suffix", () => {
     const localVue = createLocalVue();
 
@@ -32,7 +51,16 @@ describe("Plugin", () => {
       suffix: "MyApp",
     });
 
-    expect(document.title).toEqual("MyApp");
+    const Home = {
+      template: "<div>home page</div>",
+      mounted() {
+        this.$setPageTitle("My title");
+      },
+    };
+
+    mount(Home, { localVue });
+
+    expect(document.title).toEqual("My title - MyApp");
   });
 
   it("should set the page title using the global method", async () => {
@@ -455,5 +483,49 @@ describe("Plugin", () => {
     wrapper.destroy();
 
     expect(document.title).toEqual("MyApp");
+  });
+
+  it("should destroy previous title before route change", async () => {
+    const localVue = createLocalVue();
+
+    const Home = {
+      template: "<div>home</div>",
+      mounted() {
+        this.$setPageTitle("home title");
+      },
+    };
+
+    const router = new VueRouter({
+      mode: "abstract",
+      routes: [
+        {
+          name: "home",
+          path: "/",
+          component: Home,
+        },
+        {
+          name: "about",
+          path: "/about",
+          meta: {
+            title: "about title",
+          },
+        },
+      ],
+    });
+
+    localVue.use(VueRouter);
+    localVue.use(Plugin, {
+      router,
+    });
+
+    await router.push("/");
+
+    const HomeWrapper = mount(Home, { localVue, router });
+
+    await router.push("/about");
+
+    HomeWrapper.destroy();
+
+    expect(document.title).toEqual("about title");
   });
 });

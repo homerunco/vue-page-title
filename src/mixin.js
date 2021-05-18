@@ -1,11 +1,11 @@
-import { setPreviousTitle, setTitle } from "@/title";
-import { popHistoryItem } from "@/history";
+import { setTitle } from "@/title";
+import { getLasteHistoryItem, removeHistoryItem } from "@/history";
 import { setNotificationsCounter } from "@/notifications";
 
 const mixin = {
   data() {
     return {
-      $_vuePageTitle_isTitleSet: false,
+      $_vuePageTitle_title: null,
     };
   },
 
@@ -28,20 +28,21 @@ const mixin = {
   methods: {
     $updateNotificationsCounter(count) {
       setNotificationsCounter(count);
-      setTitle(popHistoryItem());
+      setTitle(getLasteHistoryItem());
     },
 
     $resetPageTitle() {
-      if (!this.$_vuePageTitle_isTitleSet) {
+      if (!this.$_vuePageTitle_title) {
         return;
       }
 
-      this.$_vuePageTitle_isTitleSet = false;
-      setPreviousTitle();
+      removeHistoryItem(this.$_vuePageTitle_title);
+      setTitle(getLasteHistoryItem());
+      this.$_vuePageTitle_title = null;
     },
 
     $setPageTitle(value) {
-      this.$_vuePageTitle_isTitleSet = true;
+      this.$_vuePageTitle_title = value;
       setTitle(value);
     },
   },
