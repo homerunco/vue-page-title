@@ -1,6 +1,5 @@
 import { getOptions } from "@/options";
 import { getNotificationsCounter } from "@/notifications";
-import { addHistoryItem } from "@/history";
 
 let documentTitle;
 let $page = {
@@ -12,28 +11,36 @@ export const storeOriginalDocumentTitle = () => {
 };
 
 export const defineGlobalProperties = (Vue) => {
-  Object.defineProperty(Vue.prototype, "$title", {
+  Vue.util.defineReactive($page, "title", "");
+  Object.defineProperty(Vue.prototype, "$pageTitle", {
     get: () => $page.title,
   });
 };
 
 export const getPageTitle = (value) => {
-  const { suffix, prefix, divider } = getOptions();
-  const notifications = getNotificationsCounter();
-  const fallbackTitle = prefix || suffix;
+  const { suffix, prefix, divider, maxNotificationAmount } = getOptions();
+  const notificationCounter = getNotificationsCounter();
+  const fallback = prefix || suffix;
 
   let pageTitle = documentTitle;
 
-  if (value) {
+  if (value === prefix || value === suffix) {
+    pageTitle = value;
+  } else if (value) {
     const suffixValue = suffix ? ` ${divider} ${suffix}` : "";
     const prefixValue = prefix ? `${prefix} ${divider} ` : "";
 
     pageTitle = prefixValue + value + suffixValue;
-  } else if (fallbackTitle) {
-    pageTitle = fallbackTitle;
+  } else if (fallback) {
+    pageTitle = fallback;
   }
 
-  if (notifications > 0) {
+  if (pageTitle !== "" && notificationCounter > 0) {
+    const notifications =
+      notificationCounter > maxNotificationAmount
+        ? `${maxNotificationAmount}+`
+        : notificationCounter;
+
     pageTitle = `(${notifications}) ${pageTitle}`;
   }
 
@@ -42,8 +49,5 @@ export const getPageTitle = (value) => {
 
 export const setTitle = (value) => {
   $page.title = value;
-
-  addHistoryItem(value);
-
   document.title = getPageTitle(value);
 };

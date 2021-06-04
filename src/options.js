@@ -2,7 +2,7 @@ const defaultOptions = {
   divider: "-",
   suffix: null,
   prefix: null,
-  router: null,
+  maxNotificationAmount: 99,
 };
 
 let options = {

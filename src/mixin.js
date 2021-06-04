@@ -1,5 +1,4 @@
 import { setTitle } from "@/title";
-import { getLasteHistoryItem, removeHistoryItem } from "@/history";
 import { setNotificationsCounter } from "@/notifications";
 
 const mixin = {
@@ -21,28 +20,23 @@ const mixin = {
     );
   },
 
-  beforeDestroy() {
-    this.$resetPageTitle();
-  },
-
   methods: {
-    $updateNotificationsCounter(count) {
+    $setPageTitleNotifications(count) {
       setNotificationsCounter(count);
-      setTitle(getLasteHistoryItem());
-    },
 
-    $resetPageTitle() {
-      if (!this.$_vuePageTitle_title) {
+      if (count === 0) {
+        this.$setPageTitle(this.$data.$_vuePageTitle_title);
         return;
       }
 
-      removeHistoryItem(this.$_vuePageTitle_title);
-      setTitle(getLasteHistoryItem());
-      this.$_vuePageTitle_title = null;
+      this.$setPageTitle(this.$pageTitle);
     },
 
     $setPageTitle(value) {
-      this.$_vuePageTitle_title = value;
+      if (!this.$data.$_vuePageTitle_title) {
+        this.$data.$_vuePageTitle_title = value;
+      }
+
       setTitle(value);
     },
   },
