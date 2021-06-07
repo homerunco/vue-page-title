@@ -1,7 +1,7 @@
 {
   "name": "@homerun/vue-page-title",
   "description": "Vue.js page title",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Matteo Gabriele",
     "email": "m.gabriele.dev@gmail.com"
