@@ -24,7 +24,7 @@ export const getPageTitle = (value) => {
 
   let pageTitle = documentTitle;
 
-  if (value === prefix || value === suffix) {
+  if (value !== null && value === fallback) {
     pageTitle = value;
   } else if (value) {
     const suffixValue = suffix ? ` ${divider} ${suffix}` : "";
