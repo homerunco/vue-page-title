@@ -1,12 +1,9 @@
 import { mount, createLocalVue } from "@vue/test-utils";
-import VueRouter from "vue-router";
-import { clearHistory } from "@/history";
 import { setNotificationsCounter } from "@/notifications";
 import Plugin from "@/index";
 
 describe("Plugin", () => {
   beforeEach(() => {
-    clearHistory();
     setNotificationsCounter(0);
 
     document.title = "Default document title";
@@ -102,166 +99,7 @@ describe("Plugin", () => {
     expect(document.title).toEqual("Home page | MyApp");
   });
 
-  it("should use the route title", async () => {
-    const localVue = createLocalVue();
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          meta: {
-            title: "Home page",
-          },
-        },
-        {
-          name: "about",
-          path: "/about",
-          meta: {
-            title: "About page",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    expect(document.title).toEqual("Home page - MyApp");
-
-    await router.push("/about");
-
-    expect(document.title).toEqual("About page - MyApp");
-  });
-
-  it("should use the route title only", async () => {
-    const localVue = createLocalVue();
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          meta: {
-            title: "Home page",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      router,
-    });
-
-    await router.push("/");
-
-    expect(document.title).toEqual("Home page");
-  });
-
-  it("should fallback to the previous title", async () => {
-    const localVue = createLocalVue();
-
-    const Child = {
-      render: (h) => h("div"),
-      title: "Child component title",
-    };
-
-    const Home = {
-      data: () => ({ isOpen: false }),
-      components: { Child },
-      template: `
-        <div>
-          <button @click="isOpen = !isOpen">render child</button>
-          <child v-if="isOpen" />
-        </div>
-      `,
-    };
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-          meta: {
-            title: "Route title",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    const wrapper = mount(Home, { localVue, router });
-
-    expect(document.title).toEqual("Route title - MyApp");
-
-    await wrapper.find("button").trigger("click");
-
-    expect(document.title).toEqual("Child component title - MyApp");
-
-    await wrapper.find("button").trigger("click");
-
-    expect(document.title).toEqual("Route title - MyApp");
-  });
-
-  it("should use the component title instead of the route title", async () => {
-    const localVue = createLocalVue();
-
-    const Home = {
-      template: "<div>home page</div>",
-      mounted() {
-        this.$setPageTitle("Component title");
-      },
-    };
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-          meta: {
-            title: "Route title",
-          },
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    mount(Home, { localVue, router });
-
-    expect(document.title).toEqual("Component title - MyApp");
-  });
-
-  it("should show notifications count with the current title", async () => {
+  it("should update the notifications count with the current title", async () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
@@ -272,21 +110,46 @@ describe("Plugin", () => {
       title: "Home page",
       template: `
           <div>
-            <button @click="updateTitle">update</button>
+            <button @click="$setPageTitleNotifications(3)">add notifications</button>
+            <button @click="$setPageTitleNotifications(0)">remove notifications</button>
           </div>
         `,
-      methods: {
-        updateTitle() {
-          this.$updateNotificationsCounter(3);
-        },
-      },
+    };
+
+    const wrapper = mount(Home, { localVue });
+
+    expect(document.title).toEqual("Home page - MyApp");
+
+    await wrapper.findAll("button").at(0).trigger("click");
+
+    expect(document.title).toEqual("(3) Home page - MyApp");
+
+    await wrapper.findAll("button").at(1).trigger("click");
+
+    expect(document.title).toEqual("Home page - MyApp");
+  });
+
+  it("should render 99+ when notification count is higher than 99", async () => {
+    const localVue = createLocalVue();
+
+    localVue.use(Plugin, {
+      suffix: "MyApp",
+    });
+
+    const Home = {
+      title: "Home page",
+      template: `
+          <div>
+            <button @click="$setPageTitleNotifications(1200)">add notifications</button>
+          </div>
+        `,
     };
 
     const wrapper = mount(Home, { localVue });
 
     await wrapper.find("button").trigger("click");
 
-    expect(document.title).toEqual("(3) Home page - MyApp");
+    expect(document.title).toEqual("(99+) Home page - MyApp");
   });
 
   it("should render the title passed as string to component option", async () => {
@@ -296,7 +159,7 @@ describe("Plugin", () => {
 
     const Home = {
       title: "Home page",
-      template: `<div>{{ $title }}</div>`,
+      template: `<div>{{ $pageTitle }}</div>`,
     };
 
     const wrapper = mount(Home, { localVue });
@@ -311,7 +174,7 @@ describe("Plugin", () => {
 
     const Home = {
       title: () => "Home page",
-      template: `<div>{{ $title }}</div>`,
+      template: `<div>{{ $pageTitle }}</div>`,
     };
 
     const wrapper = mount(Home, { localVue });
@@ -327,7 +190,7 @@ describe("Plugin", () => {
     const Home = {
       title: ({ name }) => `Hello, ${name}`,
       data: () => ({ name: "Peter Venkman " }),
-      template: `<div>{{ $title }}</div>`,
+      template: `<div>{{ $pageTitle }}</div>`,
     };
 
     const wrapper = mount(Home, { localVue });
@@ -335,197 +198,37 @@ describe("Plugin", () => {
     expect(wrapper.element).toMatchSnapshot();
   });
 
-  it("should render parent route title", async () => {
+  it("should not add prefix when title has same value", () => {
     const localVue = createLocalVue();
 
-    const Child = {
-      render: (h) => h("div"),
-    };
+    localVue.use(Plugin, {
+      prefix: "MyApp",
+    });
 
     const Home = {
-      render: (h) => h("router-view"),
+      title: "MyApp",
+      template: "<div></div>",
     };
 
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-          meta: {
-            title: "Parent title",
-          },
-          children: [
-            {
-              name: "child",
-              path: "child",
-              component: Child,
-            },
-          ],
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-      router,
-    });
-
-    await router.push("/child");
-
-    expect(document.title).toEqual("Parent title - MyApp");
-  });
-
-  it("should inherit title from current value", async () => {
-    const localVue = createLocalVue();
-
-    const Child = {
-      render: (h) => h("div"),
-    };
-
-    const Home = {
-      template: `
-        <div>
-          <button @click="$setPageTitle('Parent title')">Set title</button>
-        </div>
-      `,
-    };
-
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-          meta: {
-            inheritPageTitle: true,
-          },
-          children: [
-            {
-              name: "child",
-              path: "child",
-              component: Child,
-            },
-          ],
-        },
-      ],
-    });
-
-    localVue.use(VueRouter);
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-      router,
-    });
-
-    await router.push("/");
-
-    const wrapper = mount(Home, { localVue });
-
-    await wrapper.find("button").trigger("click");
-
-    await router.push("/child");
-
-    expect(document.title).toEqual("Parent title - MyApp");
-  });
-
-  it("should reset the title on destroy", async () => {
-    const localVue = createLocalVue();
-
-    localVue.use(Plugin, {
-      suffix: "MyApp",
-    });
-
-    const wrapper = mount(
-      {
-        template: `
-        <div>
-          <button @click="$setPageTitle('New title')">set title</button>
-        </div>
-      `,
-      },
-      { localVue }
-    );
-
-    await wrapper.find("button").trigger("click");
-
-    expect(document.title).toEqual("New title - MyApp");
-
-    wrapper.destroy();
+    mount(Home, { localVue });
 
     expect(document.title).toEqual("MyApp");
   });
 
-  it("should not reset the title on destroy if component title has never been set", async () => {
+  it("should not add suffix when title has same value", () => {
     const localVue = createLocalVue();
 
     localVue.use(Plugin, {
       suffix: "MyApp",
     });
 
-    const wrapper = mount(
-      {
-        template: `
-        <div>
-          <button @click="$setPageTitle('New title')">set title</button>
-        </div>
-      `,
-      },
-      { localVue }
-    );
-
-    expect(document.title).toEqual("MyApp");
-
-    wrapper.destroy();
-
-    expect(document.title).toEqual("MyApp");
-  });
-
-  it("should destroy previous title before route change", async () => {
-    const localVue = createLocalVue();
-
     const Home = {
-      template: "<div>home</div>",
-      mounted() {
-        this.$setPageTitle("home title");
-      },
+      title: "MyApp",
+      template: "<div></div>",
     };
 
-    const router = new VueRouter({
-      mode: "abstract",
-      routes: [
-        {
-          name: "home",
-          path: "/",
-          component: Home,
-        },
-        {
-          name: "about",
-          path: "/about",
-          meta: {
-            title: "about title",
-          },
-        },
-      ],
-    });
+    mount(Home, { localVue });
 
-    localVue.use(VueRouter);
-    localVue.use(Plugin, {
-      router,
-    });
-
-    await router.push("/");
-
-    const HomeWrapper = mount(Home, { localVue, router });
-
-    await router.push("/about");
-
-    HomeWrapper.destroy();
-
-    expect(document.title).toEqual("about title");
+    expect(document.title).toEqual("MyApp");
   });
 });
