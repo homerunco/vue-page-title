@@ -6,7 +6,7 @@ describe("Plugin", () => {
   beforeEach(() => {
     setNotificationsCounter(0);
 
-    document.title = "Default document title";
+    document.title = "default_document_title_value";
   });
 
   afterEach(() => {
@@ -19,7 +19,7 @@ describe("Plugin", () => {
 
     localVue.use(Plugin);
 
-    expect(document.title).toEqual("Default document title");
+    expect(document.title).toEqual("default_document_title_value");
   });
 
   it("should use the prefix", () => {
@@ -152,50 +152,101 @@ describe("Plugin", () => {
     expect(document.title).toEqual("(99+) Home page - MyApp");
   });
 
-  it("should render the title passed as string to component option", async () => {
-    const localVue = createLocalVue();
+  describe("title component option as string", () => {
+    it("should render when a string is passed", async () => {
+      const localVue = createLocalVue();
 
-    localVue.use(Plugin);
+      localVue.use(Plugin);
 
-    const Home = {
-      title: "Home page",
-      template: `<div>{{ $pageTitle }}</div>`,
-    };
+      const Home = {
+        title: "Home page",
+        template: "<div></div>",
+      };
 
-    const wrapper = mount(Home, { localVue });
+      mount(Home, { localVue });
 
-    expect(wrapper.element).toMatchSnapshot();
+      expect(document.title).toEqual("Home page");
+    });
+
+    it("should fallback to document title when returns null", () => {
+      const localVue = createLocalVue();
+
+      localVue.use(Plugin);
+
+      const Home = {
+        template: "<div></div>",
+        title: null,
+      };
+
+      mount(Home, { localVue });
+
+      expect(document.title).toEqual("default_document_title_value");
+    });
   });
 
-  it("should render the title passed as function to component option", async () => {
-    const localVue = createLocalVue();
+  describe("title component option as function", () => {
+    it("should render when returns a string", async () => {
+      const localVue = createLocalVue();
 
-    localVue.use(Plugin);
+      localVue.use(Plugin);
 
-    const Home = {
-      title: () => "Home page",
-      template: `<div>{{ $pageTitle }}</div>`,
-    };
+      const Home = {
+        title: () => "Home page",
+        template: "<div></div>",
+      };
 
-    const wrapper = mount(Home, { localVue });
+      mount(Home, { localVue });
 
-    expect(wrapper.element).toMatchSnapshot();
+      expect(document.title).toEqual("Home page");
+    });
+
+    it("should render using component data", async () => {
+      const localVue = createLocalVue();
+
+      localVue.use(Plugin);
+
+      const Home = {
+        title: ({ name }) => `Hello, ${name}`,
+        data: () => ({ name: "Peter Venkman " }),
+        template: "<div></div>",
+      };
+
+      mount(Home, { localVue });
+
+      expect(document.title).toEqual("Hello, Peter Venkman");
+    });
+
+    it("should fallback to document title when returns null", () => {
+      const localVue = createLocalVue();
+
+      localVue.use(Plugin);
+
+      const Home = {
+        template: "<div></div>",
+        title: () => null,
+      };
+
+      mount(Home, { localVue });
+
+      expect(document.title).toEqual("default_document_title_value");
+    });
   });
 
-  it("should render the title using component data", async () => {
+  it("should render page title in the template using the global computed value", async () => {
     const localVue = createLocalVue();
 
-    localVue.use(Plugin);
-
     const Home = {
-      title: ({ name }) => `Hello, ${name}`,
-      data: () => ({ name: "Peter Venkman " }),
-      template: `<div>{{ $pageTitle }}</div>`,
+      template: "<div class='title'>{{ $pageTitle }}</div>",
+      title: "Component title",
     };
+
+    localVue.use(Plugin, {
+      suffix: "MyApp",
+    });
 
     const wrapper = mount(Home, { localVue });
 
-    expect(wrapper.element).toMatchSnapshot();
+    expect(wrapper.find(".title").text()).toEqual("Component title");
   });
 
   it("should not add prefix when title has same value", () => {
